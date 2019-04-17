@@ -56,11 +56,19 @@ while True:
                     if enemyrace == "P": rurl = "&race=protoss"
                     elif enemyrace == "Z": rurl = "&race=zerg"
                     elif enemyrace == "R": rurl = "&race=random"
+                    enemymmr = ""
                     with urllib.request.urlopen("http://sc2unmasked.com/Search?q="+enemyname+"&page=1&server=eu&results=1"+rurl) as url:
-                        mmr = url.read().decode().split('<td class="align-right">')[1].split('<')[0]
+                        enemymmr = url.read().decode().split('<td class="align-right">')[1].split('<')[0]
                         print(enemyname + " [" + mmr + "MMR] " + enemyrace)
-                        with open("vihunmmr.txt", "w") as f: 
-                            f.write(enemyname + " [" + mmr + "MMR] " + enemyrace)
+                    #TODO: use blizz api to get this since we know own id
+                    with urllib.request.urlopen("http://sc2unmasked.com/Search?q="+playername+"&page=1&server=eu&results=1"+rurl) as url:
+                        playermmr = url.read().decode().split('<td class="align-right">')[1].split('<')[0]
+                        print(playername + " [" + mmr + "MMR] ")
+                        with open("vihunmmr.txt", "w") as f:
+                        	overlaytext = "{} [{}MMR] vs {} [{}] {}".format(playername, playermmr, enemyname, enemymmr, enemyrace)
+                            f.write(overlaytext)
+
+
     except:
         print("Virhe.")
     time.sleep(updateInterval)
