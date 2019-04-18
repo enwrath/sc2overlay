@@ -10,17 +10,10 @@
 #Blizzard launcherissa sc2 sivulta: Options-Game settings-additional command line arguments- "-clientapi 6119" (ilman lainausmerkkejä)
 #!!!!
 
+#See settings.py for user settings.
+
 import urllib.request, json, time, sys, shutil
-
-#Things to move to settings file
-playername = "Enwrath" 
-sc2ip = "localhost" #Sen koneen ip jolla pelaat, esim cmd promptissa ipconfig
-sc2port = 6220 #Change to default for default conf. Is it 6119?
-updateInterval = 10 #Kuinka monen sekunnin välein tarkistetaan josko olisi uusi peli
-betweengamesmsg = "Vuotetaan seuraavaa vihua"
-
-
-
+import settings as conf
 
 
 #Non-setting variables
@@ -59,18 +52,18 @@ def emptyRaceImages():
 def updateOverlay():
     if ingame:
         with open("vihunmmr.txt", "w") as f:
-            overlaytext = "{} [{}MMR] vs {} [{}] {}".format(playername, playermmr, enemyname, enemymmr, enemyrace)
+            overlaytext = "{} [{}MMR] vs {} [{}] {}".format(conf.playername, playermmr, enemyname, enemymmr, enemyrace)
             f.write(overlaytext)
         updateRaceImages()
             
     else:
         with open("vihunmmr.txt", "w") as f: 
-            f.write(betweengamesmsg)
+            f.write(conf.betweengamesmsg)
         emptyRaceImages()
 
-def checkIngameStatus:
+def checkIngameStatus():
     try:
-        with urllib.request.urlopen("http://"+sc2ip+":"+sc2port+"/ui") as url:
+        with urllib.request.urlopen("http://"+conf.sc2ip+":"+conf.sc2port+"/ui") as url:
             data = json.loads(url.read().decode())
             if len(data['activeScreens']) > 0:
                 ingame = False
@@ -81,13 +74,13 @@ def checkIngameStatus:
 
 def checkOpponent():
     try:
-        with urllib.request.urlopen("http://"+sc2ip+":"+sc2port+"/game") as url:
+        with urllib.request.urlopen("http://"+conf.sc2ip+":"+conf.sc2port+"/game") as url:
             data = json.loads(url.read().decode())
             if len(data['players']) == 2: #1v1 game
                 enemyname = data['players'][0]['name']
                 enemyindex = 0
                 playerrace = data['players'][1]['race'][0]
-                if enemyname == playername:
+                if enemyname == conf.playername:
                     enemyname = data['players'][1]['name']
                     enemyindex = 1
                     playerrace = data['players'][0]['race'][0]
@@ -121,12 +114,13 @@ def getOpponentMMR():
 def getOwnMMR():
     try:
         #User probably has an unique name, right?
-        with urllib.request.urlopen("http://sc2unmasked.com/Search?q="+playername+"&page=1&server=eu&results=1") as url:
-        playermmr = url.read().decode().split('<td class="align-right">')[1].split('<')[0]
+        with urllib.request.urlopen("http://sc2unmasked.com/Search?q="+conf.playername+"&page=1&server=eu&results=1") as url:
+            playermmr = url.read().decode().split('<td class="align-right">')[1].split('<')[0]
     except:
         print("Error getting own mmr")
 
-def updateData:
+def updateData():
+    global oldenemy
     checkIngameStatus()
     if ingame:
         checkOpponent()
@@ -142,6 +136,6 @@ def updateData:
 def updateLoop():
     while True:
         updateData()
-        time.sleep(updateInterval)
+        time.sleep(conf.updateInterval)
 
 updateLoop()
