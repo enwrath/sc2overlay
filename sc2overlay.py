@@ -23,25 +23,25 @@ oldenemy = ""
 enemyrace = ""
 playermmr = ""
 enemymmr = ""
-ingame = 0
+ingame = False
 playerrace = ""
 
 def updateRaceImages():
-    if playerrace == 'T':
+    if playerrace == "T":
         shutil.copyfile("overlayimages/terran.png", "playerrace.png")
-    elif playerrace == 'P':
+    elif playerrace == "P":
         shutil.copyfile("overlayimages/protoss.png", "playerrace.png")
-    elif playerrace == 'Z':
-        shutil.copyfile("overlayimages/protoss.png", "playerrace.png")
+    elif playerrace == "Z":
+        shutil.copyfile("overlayimages/zerg.png", "playerrace.png")
     else:
         shutil.copyfile("overlayimages/random.png", "playerrace.png")
 
-    if enemyrace == 'T':
+    if enemyrace == "T":
         shutil.copyfile("overlayimages/terran.png", "enemyrace.png")
-    elif enemyrace == 'P':
+    elif enemyrace == "P":
         shutil.copyfile("overlayimages/protoss.png", "enemyrace.png")
-    elif enemyrace == 'Z':
-        shutil.copyfile("overlayimages/protoss.png", "enemyrace.png")
+    elif enemyrace == "Z":
+        shutil.copyfile("overlayimages/zerg.png", "enemyrace.png")
     else:
         shutil.copyfile("overlayimages/random.png", "enemyrace.png")
 
