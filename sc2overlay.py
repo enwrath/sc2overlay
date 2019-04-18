@@ -63,7 +63,7 @@ def updateOverlay():
 def checkIngameStatus():
     global ingame
     try:
-        with urllib.request.urlopen("http://"+conf.sc2ip+":"+conf.sc2port+"/ui") as url:
+        with urllib.request.urlopen("http://{}:{}/ui".format(conf.sc2ip, conf.sc2port)) as url:
             data = json.loads(url.read().decode())
             if len(data['activeScreens']) > 0:
                 ingame = False
@@ -75,7 +75,7 @@ def checkIngameStatus():
 def checkOpponent():
     global enemyrace, enemyname, playerrace
     try:
-        with urllib.request.urlopen("http://"+conf.sc2ip+":"+conf.sc2port+"/game") as url:
+        with urllib.request.urlopen("http://{}:{}/game".format(conf.sc2ip, conf.sc2port)) as url:
             data = json.loads(url.read().decode())
             if len(data['players']) == 2: #1v1 game
                 enemyname = data['players'][0]['name']
@@ -109,8 +109,9 @@ def getOpponentMMR():
 
             #Choose mmr closest to player mmr
             enemymmr = min(mmrs, key=lambda x:abs(x-playermmr))
-    except:
+    except Exception as e:
         print("Error getting opponent mmr")
+        print(str(e))
 
 #TODO: Use Blizzard api since user can just input his own id.
 def getOwnMMR():
@@ -118,7 +119,7 @@ def getOwnMMR():
     try:
         #User probably has an unique name, right?
         with urllib.request.urlopen("http://sc2unmasked.com/Search?q="+conf.playername+"&page=1&server=eu&results=1") as url:
-            playermmr = url.read().decode().split('<td class="align-right">')[1].split('<')[0]
+            playermmr = int(url.read().decode().split('<td class="align-right">')[1].split('<')[0])
     except:
         print("Error getting own mmr")
 
