@@ -18,7 +18,6 @@ import settings as conf
 
 #Non-setting variables
 enemyname = ""
-enemyindex = 0
 oldenemy = ""
 enemyrace = ""
 playermmr = ""
@@ -62,6 +61,7 @@ def updateOverlay():
         emptyRaceImages()
 
 def checkIngameStatus():
+    global ingame
     try:
         with urllib.request.urlopen("http://"+conf.sc2ip+":"+conf.sc2port+"/ui") as url:
             data = json.loads(url.read().decode())
@@ -73,6 +73,7 @@ def checkIngameStatus():
         print("SC2 is not running or cannot be connected to.")
 
 def checkOpponent():
+    global enemyrace, enemyname, playerrace
     try:
         with urllib.request.urlopen("http://"+conf.sc2ip+":"+conf.sc2port+"/game") as url:
             data = json.loads(url.read().decode())
@@ -91,6 +92,7 @@ def checkOpponent():
 #Rumor has it that MMR might be added to client api soon(tm)
 #Super elegant work-around before future is here
 def getOpponentMMR():
+    global enemymmr
     try:
         rurl = "&race=terran"
         if enemyrace == "P": rurl = "&race=protoss"
@@ -106,12 +108,13 @@ def getOpponentMMR():
                 mmrs.append(int(m.split('<td class="align-right">')[-1]))
 
             #Choose mmr closest to player mmr
-            mmr = min(mmrs, key=lambda x:abs(x-playermmr))
+            enemymmr = min(mmrs, key=lambda x:abs(x-playermmr))
     except:
         print("Error getting opponent mmr")
 
 #TODO: Use Blizzard api since user can just input his own id.
 def getOwnMMR():
+    global playermmr
     try:
         #User probably has an unique name, right?
         with urllib.request.urlopen("http://sc2unmasked.com/Search?q="+conf.playername+"&page=1&server=eu&results=1") as url:
