@@ -10,7 +10,7 @@
 #Blizzard launcherissa sc2 sivulta: Options-Game settings-additional command line arguments- "-clientapi 6119" (ilman lainausmerkkejä)
 #!!!!
 
-import urllib.request, json, time, sys
+import urllib.request, json, time, sys, shutil
 
 #Things to move to settings file
 playername = "Enwrath" 
@@ -31,15 +31,42 @@ enemyrace = ""
 playermmr = ""
 enemymmr = ""
 ingame = 0
+playerrace = ""
+
+def updateRaceImages():
+    if playerrace == 'T':
+        shutil.copyfile("overlayimages/terran.png", "playerrace.png")
+    elif playerrace == 'P':
+        shutil.copyfile("overlayimages/protoss.png", "playerrace.png")
+    elif playerrace == 'Z':
+        shutil.copyfile("overlayimages/protoss.png", "playerrace.png")
+    else:
+        shutil.copyfile("overlayimages/random.png", "playerrace.png")
+
+    if enemyrace == 'T':
+        shutil.copyfile("overlayimages/terran.png", "enemyrace.png")
+    elif enemyrace == 'P':
+        shutil.copyfile("overlayimages/protoss.png", "enemyrace.png")
+    elif enemyrace == 'Z':
+        shutil.copyfile("overlayimages/protoss.png", "enemyrace.png")
+    else:
+        shutil.copyfile("overlayimages/random.png", "enemyrace.png")
+
+def emptyRaceImages():
+    shutil.copyfile("overlayimages/empty.png", "playerrace.png")
+    shutil.copyfile("overlayimages/empty.png", "enemyrace.png")
 
 def updateOverlay():
     if ingame:
         with open("vihunmmr.txt", "w") as f:
             overlaytext = "{} [{}MMR] vs {} [{}] {}".format(playername, playermmr, enemyname, enemymmr, enemyrace)
             f.write(overlaytext)
+        updateRaceImages()
+            
     else:
         with open("vihunmmr.txt", "w") as f: 
             f.write(betweengamesmsg)
+        emptyRaceImages()
 
 def checkIngameStatus:
     try:
@@ -59,9 +86,11 @@ def checkOpponent():
             if len(data['players']) == 2: #1v1 game
                 enemyname = data['players'][0]['name']
                 enemyindex = 0
+                playerrace = data['players'][1]['race'][0]
                 if enemyname == playername:
                     enemyname = data['players'][1]['name']
                     enemyindex = 1
+                    playerrace = data['players'][0]['race'][0]
                 enemyrace = data['players'][enemyindex]['race'][0]
     except:
         print("Some error lol")
