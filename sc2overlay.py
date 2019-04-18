@@ -51,7 +51,9 @@ def emptyRaceImages():
 def updateOverlay():
     if ingame:
         with open("vihunmmr.txt", "w") as f:
-            overlaytext = "{} [{}MMR] vs {} [{}] {}".format(conf.playername, playermmr, enemyname, enemymmr, enemyrace)
+            ename = enemyname[0:12].center(12)
+            pname = conf.playername[0:12].center(12)
+            overlaytext = "{} [{}MMR] vs {} [{}]".format(pname, playermmr, ename, enemymmr)
             f.write(overlaytext)
         updateRaceImages()
             
