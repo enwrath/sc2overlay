@@ -74,8 +74,17 @@ def getOpponentMMR():
         if enemyrace == "P": rurl = "&race=protoss"
         elif enemyrace == "Z": rurl = "&race=zerg"
         elif enemyrace == "R": rurl = "&race=random"
-        with urllib.request.urlopen("http://sc2unmasked.com/Search?q="+enemyname+"&page=1&server=eu&results=1"+rurl) as url:
-            enemymmr = url.read().decode().split('<td class="align-right">')[1].split('<')[0]
+        with urllib.request.urlopen("http://sc2unmasked.com/Search?q="+enemyname+"&page=1&server=eu&results=25"+rurl) as url:
+            d = url.read().decode()
+            mmrs = []
+            mmrcandidates = d.count('</td><td class="align-right win-ratio')
+            data = d.split('</td><td class="align-right win-ratio')
+            data.pop()
+            for m in data:
+                mmrs.append(int(m.split('<td class="align-right">')[-1]))
+
+            #Choose mmr closest to player mmr
+            mmr = min(mmrs, key=lambda x:abs(x-playermmr))
     except:
         print("Error getting opponent mmr")
 
@@ -96,8 +105,9 @@ def updateData:
         oldenemy = enemyname
         #New game has started.
         #Or if we find same player twice in a row sc2unmasked probably hasn't updated yet so no need to update mmr
-        getOpponentMMR()
         getOwnMMR()
+        getOpponentMMR()
+        
     updateOverlay()
 
 def updateLoop():
